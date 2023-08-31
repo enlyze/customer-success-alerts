@@ -1,7 +1,6 @@
 groups:
   - name: sparkd
     rules:
-      # Check if a datasource is missing caches for more than 2 days
       - alert: DatasourceMissingCaches
         expr: >
           (sparkd_bridge_datasource_cache_misses{environment=~"live"} 
