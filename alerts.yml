@@ -1,0 +1,22 @@
+groups:
+  - name: sparkd
+    rules:
+      # Check if a datasource is missing caches for more than 2 days
+      - alert: DatasourceMissingCaches
+        expr: >
+          (sparkd_bridge_datasource_cache_misses{environment=~"live"} 
+          UNLESS 
+          last_over_time(
+            (
+              rate(
+                sparkd_bridge_datasource_cache_misses{environment=~"live"}[3m]
+              )==0
+            )[2d:3m]
+          ))>0
+        for: 5m
+        labels:
+          team: customer-success
+        annotations:
+          summary: >
+            Data source {{ $labels.name }} of customer {{ $labels.customer }} and appliance {{ $labels.appliance }}
+            has not been reading out data for at least two days.
