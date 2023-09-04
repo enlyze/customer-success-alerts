@@ -1,0 +1,24 @@
+
+kind: pipeline
+name: CI Customer Service Alerts
+
+trigger:
+  branch:
+    - master
+
+steps:
+- name: Sparkd alert rules
+  pull: always
+  image: docker.enlyze.com/enlyze/deploy-alert-rules
+  environment:
+    DEPLOY_SSH_KEY:
+      from_secret: deploy_alert_rules_ssh_key
+    RELOAD_PASSWORD:
+      from_secret: deploy_alert_rules_prometheus_password
+  commands:
+    - >
+      deploy-alert-rules
+      --ssh-key="$${DEPLOY_SSH_KEY}"
+      --prometheus-reload-password="$${RELOAD_PASSWORD}"
+      customer-success-alerts
+      alerts.yml
